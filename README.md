@@ -39,20 +39,24 @@ Add the converter to your `configuration.yaml` in Zigbee2MQTT:
 
 ```yaml
 external_converters:
-  - danfoss_ally_effective_temp.js
-  
+    - danfoss_ally_effective_temp.js
+```
+
 ### 3. Restart Zigbee2MQTT
+
 Restart your Zigbee2MQTT service/addon to load the new definition.
 
-Usage in Home Assistant
-Find your Danfoss Ally device in Home Assistant.
-Look for the new switch entity: "Use external temperature".
-Turn it ON: The Climate entity will now show the external room temperature.
-Turn it OFF: The Climate entity reverts to the internal TRV sensor.
-TIP
+Usage in Home Assistant Find your Danfoss Ally device in Home Assistant. Look
+for the new switch entity: "Use external temperature". Turn it ON: The Climate
+entity will now show the external room temperature. Turn it OFF: The Climate
+entity reverts to the internal TRV sensor. TIP
 
-This works perfectly in combination with blueprints that send external room temperatures to the Danfoss Ally (like the MSL-DA blueprint).
+This works perfectly in combination with blueprints that send external room
+temperatures to the Danfoss Ally (like the MSL-DA blueprint).
 
-Technical Note
-This converter works by extending the official source code for the Danfoss Ally within Zigbee2MQTT. It handles both older and newer versions of zigbee-herdsman-converters.
+Technical Note This converter works by extending the official source code for
+the Danfoss Ally within Zigbee2MQTT. It handles both older and newer versions of
+zigbee-herdsman-converters.
+
+```
 ```
