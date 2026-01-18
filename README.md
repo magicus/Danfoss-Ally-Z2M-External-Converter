@@ -31,7 +31,7 @@ internal sensor and the external "effective" temperature.
 ### 1. Copy the Converter
 
 Copy the `danfoss_ally_effective_temp.js` file into your Zigbee2MQTT
-`external_converters` folder.
+`external_converters` folder (e.g., `config/zigbee2mqtt/external_converters`).
 
 ### 2. Update Zigbee2MQTT Configuration
 
@@ -39,7 +39,7 @@ Add the converter to your `configuration.yaml` in Zigbee2MQTT:
 
 ```yaml
 external_converters:
-    - danfoss_ally_effective_temp.js
+  - danfoss_ally_effective_temp.js
 ```
 
 ### 3. Restart Zigbee2MQTT
