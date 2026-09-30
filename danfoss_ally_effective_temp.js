@@ -6,6 +6,7 @@
  * - When enabled, override 'local_temperature' with the external room sensor value
  * - Automatically fall back to internal sensor when external is unavailable (-8000)
  * - Round to 1 decimal place to ensure display consistency in Home Assistant
+ * - Always expose the TRV's own sensor value as 'internal_temperature'
  * 
  * This is READ-ONLY - nothing is written to the TRV device itself.
  */
@@ -60,6 +61,22 @@ const tzUseExternalTemperature = {
         return { state: { use_external_temperature: value } };
     },
 };
+
+// Converter exposing the TRV's own internal temperature independently
+const internalTemperatureConverter = {
+    cluster: 'hvacThermostat',
+    type: ['attributeReport', 'readResponse'],
+    convert: (model, msg, publish, options, meta) => {
+        if (msg.data.localTemp === undefined) {
+            return {};
+        }
+
+        return {
+            internal_temperature: msg.data.localTemp / 100,
+        };
+    },
+};
+
 // Safely combine exposes
 const originalExposes = Array.isArray(originalDevice.exposes) 
     ? originalDevice.exposes 
@@ -68,7 +85,10 @@ module.exports = [
     {
         ...originalDevice,
         description: originalDevice.description + ' (with effective temperature display)',
-        fromZigbee: wrappedFromZigbee,
+        fromZigbee: [
+            ...wrappedFromZigbee,
+            internalTemperatureConverter,
+        ],
         toZigbee: [
             ...(originalDevice.toZigbee || []),
             tzUseExternalTemperature,
@@ -77,6 +97,9 @@ module.exports = [
             ...originalExposes,
             e.binary('use_external_temperature', ea.STATE_SET, true, false)
                 .withDescription('Display external room sensor temperature as current temperature in Home Assistant'),
+            e.numeric('internal_temperature', ea.STATE)
+                .withUnit('°C')
+                .withDescription('Temperature measured by the internal TRV sensor'),
         ],
     },
 ];
