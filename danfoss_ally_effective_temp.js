@@ -4,6 +4,7 @@
  * This external converter extends the built-in Danfoss Ally definition to:
  * - Add a 'use_external_temperature' toggle (stored in Z2M state only)
  * - When enabled, override 'local_temperature' with the external room sensor value
+ * - Always expose the TRV's own sensor value as 'internal_temperature'
  * - Automatically fall back to internal sensor when external is unavailable (-8000)
  * - Round to 1 decimal place to ensure display consistency in Home Assistant
  * 
@@ -32,6 +33,10 @@ const wrappedFromZigbee = originalDevice.fromZigbee.map(converter => {
         convert: (model, msg, publish, options, meta) => {
             // Get original result first (might contain internal local_temperature)
             const result = converter.convert(model, msg, publish, options, meta) || {};
+
+            if (typeof result.local_temperature === 'number') {
+                result.internal_temperature = result.local_temperature;
+            }
             
             // Check if user wants to use external temperature
             const useExternal = meta.state?.use_external_temperature === true;
@@ -77,6 +82,9 @@ module.exports = [
             ...originalExposes,
             e.binary('use_external_temperature', ea.STATE_SET, true, false)
                 .withDescription('Display external room sensor temperature as current temperature in Home Assistant'),
+            e.numeric('internal_temperature', ea.STATE)
+                .withUnit('°C')
+                .withDescription('Temperature measured by the internal TRV sensor'),
         ],
     },
 ];

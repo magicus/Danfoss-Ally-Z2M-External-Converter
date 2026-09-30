@@ -17,6 +17,9 @@ internal sensor and the external "effective" temperature.
 
 - **Display Override**: Intercepts `local_temperature` and replaces it with the
   external sensor value when desired.
+- **Internal Temperature**: Always publishes the TRV's own sensor reading as
+  `internal_temperature`, regardless of which value is shown as
+  `local_temperature`.
 - **Toggle Control**: Adds a `Use external temperature` switch to the device in
   Home Assistant.
 - **Bleed-through Fix**: Ensures the display remains stable! It uses the last
