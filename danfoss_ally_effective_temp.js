@@ -34,8 +34,11 @@ const wrappedFromZigbee = originalDevice.fromZigbee.map(converter => {
             // Get original result first (might contain internal local_temperature)
             const result = converter.convert(model, msg, publish, options, meta) || {};
 
-            if (typeof result.local_temperature === 'number') {
-                result.internal_temperature = result.local_temperature;
+            if (msg.data.localTemp !== undefined) {
+                const internalTemperature = Number(msg.data.localTemp) / 100;
+                if (Number.isFinite(internalTemperature) && internalTemperature >= -273.15) {
+                    result.internal_temperature = internalTemperature;
+                }
             }
             
             // Check if user wants to use external temperature
